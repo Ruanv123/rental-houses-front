@@ -1,5 +1,8 @@
 import { api } from '@/lib/axios'
 import { defineStore } from 'pinia'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -14,6 +17,7 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     async login(token: string) {
+      localStorage.setItem('token', token)
       this.token = token
       this.isLogged = true
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`
@@ -32,7 +36,10 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       this.token = ''
       this.isLogged = false
+      localStorage.removeItem('token')
       delete api.defaults.headers.common['Authorization']
+
+      router.push('/login')
     }
   }
 })

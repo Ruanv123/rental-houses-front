@@ -14,6 +14,7 @@ import {
 } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
+import { useAuthStore } from '@/stores/authStore'
 
 const routes = ref([
   {
@@ -37,6 +38,8 @@ const routes = ref([
     title: 'Analytics'
   }
 ])
+
+const authStore = useAuthStore()
 </script>
 
 <template>
@@ -72,7 +75,7 @@ const routes = ref([
       <SheetContent side="left">
         <nav class="grid gap-6 text-lg font-medium">
           <RouterLink to="/dashboard" class="flex items-center gap-2 text-lg font-semibold">
-            <House class="h-6 w-6" />
+            <House class="h-6 w-6" /> Acme Inc
             <span class="sr-only">Acme Inc</span>
           </RouterLink>
           <RouterLink
@@ -123,11 +126,13 @@ const routes = ref([
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <RouterLink to="/settings">Settings</RouterLink>
+            <RouterLink to="/dashboard/settings">Settings</RouterLink>
           </DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <button @click="authStore.logout" class="cursor-pointer w-full">
+            <DropdownMenuItem class="cursor-pointer">Logout</DropdownMenuItem>
+          </button>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

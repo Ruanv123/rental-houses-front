@@ -76,7 +76,7 @@ async function handleLogin() {
     </div>
     <div class="hidden bg-muted lg:block">
       <img
-        src="https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?cs=srgb&dl=pexels-pixabay-259588.jpg&fm=jpg"
+        src="/home-login.jpg"
         alt="Image"
         width="1920"
         height="1080"
