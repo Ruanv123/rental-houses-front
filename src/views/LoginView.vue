@@ -4,16 +4,37 @@ import { Input } from '@/components/ui/input'
 import { RouterLink, useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import { ref } from 'vue'
+import { toast } from 'vue-sonner'
+import { useAuthStore } from '@/stores/authStore'
 
 const email = ref('')
 const password = ref('')
 
 const router = useRouter()
 
-function handleLogin() {
+const authStore = useAuthStore()
+
+async function handleLogin() {
   if (email.value !== '' && password.value !== '') {
-    console.log(email.value, password.value)
-    router.push('/dashboard')
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email.value, password: password.value })
+    })
+
+    const data = await res.json()
+
+    console.log(data)
+
+    if (res.status === 200) {
+      authStore.login(data.access_token)
+      toast.success('Login successful')
+      router.push('/dashboard')
+    } else {
+      toast.error('Invalid credentials')
+    }
   }
 }
 </script>

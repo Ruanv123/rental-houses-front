@@ -1,12 +1,10 @@
-import type { LoginProps } from '@/@types'
 import { api } from '@/lib/axios'
-import axios from 'axios'
 import { defineStore } from 'pinia'
 
-export const authStore = defineStore('auth', {
+export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    token: null,
+    token: '',
     isLogged: false
   }),
 
@@ -15,32 +13,24 @@ export const authStore = defineStore('auth', {
   },
 
   actions: {
-    async login({ email, password }: LoginProps) {
-      try {
-        const res = await fetch('/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email, password })
-        })
-
-        if (res.status == 200) {
-          const data = await res.json()
-          this.token = data.token
-          this.isLogged = true
-          api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
-        }
-      } catch (err) {
-        console.log(err)
-      }
+    async login(token: string) {
+      this.token = token
+      this.isLogged = true
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
     },
     async getProfile() {
-      const res = await api.get('/api/profile')
+      try {
+        const res = await api.get('/api/profile')
+        if (res.status === 200) {
+          this.user = res.data
+        }
+      } catch (error) {
+        console.log(error)
+      }
     },
     logout() {
       this.user = null
-      this.token = null
+      this.token = ''
       this.isLogged = false
       delete api.defaults.headers.common['Authorization']
     }

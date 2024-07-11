@@ -1,16 +1,42 @@
 <script setup lang="ts">
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { RouterLink } from 'vue-router'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
+
+const router = useRouter()
 
 const name = ref('')
 const email = ref('')
 const password = ref('')
 
-function handleSubmit() {
-  console.log()
+async function handleSubmit() {
+  if (name.value !== '' && email.value !== '' && password.value !== '') {
+    try {
+      const res = await fetch('/api/user/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: name.value, email: email.value, password: password.value })
+      })
+
+      const data = await res.json()
+
+      if (res.status === 201) {
+        toast.success('Registration successful')
+        router.push('/login')
+      } else if (res.status === 500) {
+        toast.error('User already exists')
+      } else {
+        toast.error(data.messsage)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
 </script>
 
@@ -42,6 +68,7 @@ function handleSubmit() {
                 </RouterLink>
               </div>
               <Input id="password" type="password" required v-model="password" />
+              <small>Password must be at least 8 characters</small>
             </div>
             <Button type="submit" class="w-full"> Login </Button>
             <Button variant="outline" class="w-full"> Login with Google </Button>
